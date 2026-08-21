@@ -4,13 +4,12 @@ import { Reveal } from "@/components/anim/Reveal";
 type SectionHeadingProps = {
   kicker: string;
   heading: string;
-  align?: "left" | "center";
   className?: string;
 };
 
-export function SectionHeading({ kicker, heading, align = "left", className = "" }: SectionHeadingProps) {
+export function SectionHeading({ kicker, heading, className = "" }: SectionHeadingProps) {
   return (
-    <div className={`section-head ${align === "center" ? "is-center" : ""} ${className}`}>
+    <div className={`section-head ${className}`}>
       <Reveal>
         <span className="kicker">{kicker}</span>
       </Reveal>
