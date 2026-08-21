@@ -7,6 +7,7 @@
    ========================================================================== */
 
 import { X_HANDLE } from "./site";
+import { reelVideos } from "./reels.generated";
 
 export const content = {
   brand: "Likelyfad",
@@ -31,19 +32,11 @@ export const content = {
     reassurance: "First concepts in 72 hours · No retainers · No fine print.",
   },
 
-  // 3D reel wall — placeholder clips (swap the files in /public/videos later)
+  /* 3D reel wall — the clip list is generated from the Google Drive folder by
+     `npm run sync:videos`, so add or remove reels in Drive, not here. */
   reels: {
     caption: "Real work, not renders — every frame generated.",
-    videos: [
-      "/videos/reel-01.mp4",
-      "/videos/reel-02.mp4",
-      "/videos/reel-03.mp4",
-      "/videos/reel-04.mp4",
-      "/videos/reel-05.mp4",
-      "/videos/reel-06.mp4",
-      "/videos/reel-07.mp4",
-      "/videos/reel-08.mp4",
-    ],
+    videos: reelVideos,
   },
 
   why: {

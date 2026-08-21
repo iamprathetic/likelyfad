@@ -10,7 +10,7 @@ export function Pricing() {
   return (
     <section className="section pricing" id="pricing" aria-label="Pricing">
       <div className="wrap">
-        <SectionHeading kicker={pricing.kicker} heading={pricing.heading} align="center" />
+        <SectionHeading kicker={pricing.kicker} heading={pricing.heading} />
 
         <Reveal className="pricing-card">
           <div className="pricing-card-inner">

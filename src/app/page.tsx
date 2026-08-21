@@ -16,8 +16,10 @@ export default function Home() {
       </a>
       <Nav />
       <main id="main">
-        <Hero />
-        <ReelWall />
+        <div className="hero-split">
+          <Hero />
+          <ReelWall />
+        </div>
         <WhyUs />
         <Pricing />
         <Testimonials />

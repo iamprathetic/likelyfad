@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
+    "sync:videos": "node --env-file-if-exists=.env.local scripts/sync-drive-videos.mjs",
     "start": "next start",
     "lint": "next lint"
   },

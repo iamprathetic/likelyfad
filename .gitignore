@@ -30,3 +30,6 @@ next-env.d.ts
 
 .vercel
 .env*
+
+# drive video sync cache (scripts/sync-drive-videos.mjs)
+.drive-sync.json
