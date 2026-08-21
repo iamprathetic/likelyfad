@@ -39,9 +39,11 @@ const LANES = 3;
    lane on its own, so no clip is duplicated within a lane — with a large Drive
    folder that means 18 different reels on the wall instead of 9. */
 const PER_LANE = 6;
-/* Ceiling on simultaneous playback. Roughly what fits on screen at once, so in
-   practice the observer is the binding constraint and this is the safety net. */
-const MAX_PLAYING = 9;
+/* Ceiling on simultaneous playback — the wall's dominant cost. ~8 cards are on
+   screen at 1440px, so this genuinely binds: the clips that miss out are the
+   newest arrivals, and those are still inside the edge fade where a held
+   poster frame is hard to notice. Raise it if the wall looks too static. */
+const MAX_PLAYING = 6;
 const DESKTOP = "(min-width: 961px)";
 
 export function ReelWall() {
@@ -100,18 +102,22 @@ export function ReelWall() {
     const visible = new Set<HTMLVideoElement>();
     const playing = new Set<HTMLVideoElement>();
 
-    // Grant the budget in DOM order so the set of players stays stable frame to
-    // frame — picking arbitrarily would thrash play/pause on the same clips.
+    /* Incumbents keep their slot. Re-granting the budget purely in DOM order
+       meant a card that just became visible could evict one already playing,
+       so clips flapped play/pause continuously as the lanes moved — and a
+       play() interrupted by pause() is exactly what makes decoding stutter.
+       Only leftover budget goes to new arrivals. */
     const reconcile = () => {
       if (suspended.current) return;
-      let budget = MAX_PLAYING;
+      const keep = players.filter((v) => playing.has(v) && visible.has(v));
+      const arriving = players.filter((v) => !playing.has(v) && visible.has(v));
+      const wanted = new Set([...keep, ...arriving].slice(0, MAX_PLAYING));
+
       for (const v of players) {
-        const wanted = visible.has(v) && budget > 0;
-        if (wanted) budget--;
-        if (wanted && !playing.has(v)) {
+        if (wanted.has(v) && !playing.has(v)) {
           playing.add(v);
           v.play().catch(() => playing.delete(v));
-        } else if (!wanted && playing.has(v)) {
+        } else if (!wanted.has(v) && playing.has(v)) {
           playing.delete(v);
           v.pause();
         }
@@ -232,6 +238,13 @@ export function ReelWall() {
           };
         });
 
+        const stage = root.current!.querySelector(".reelwall-stage");
+        const restoreAll = () => {
+          if (suspended.current) return;
+          loops.forEach((l, i) => gsap.to(l, { timeScale: dirs[i], duration: 0.7 }));
+        };
+        stage?.addEventListener("pointerleave", restoreAll);
+
         marquee.current = {
           stop: () => loops.forEach((l) => l.pause()),
           start: () =>
@@ -246,6 +259,7 @@ export function ReelWall() {
 
         return () => {
           unbind.forEach((off) => off());
+          stage?.removeEventListener("pointerleave", restoreAll);
           loops.forEach((loop) => loop.kill());
           marquee.current = null;
         };

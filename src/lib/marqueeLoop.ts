@@ -89,11 +89,23 @@ export function marqueeLoop(
   }
 
   const offset = (config.startProgress || 0) * tl.duration();
-  if (config.reversed) {
-    // A repeat:-1 timeline can't run backwards from time 0, so park it far
-    // into the future first — it then has effectively unlimited runway.
+  const iteration = tl.duration();
+  if (config.reversed && iteration > 0) {
+    /* A repeat:-1 timeline runs forever forwards but stops dead when a negative
+       timeScale walks totalTime back to 0 — so a reversed lane needs runway,
+       and any fixed amount of it eventually runs out. (That was this file's
+       bug: the lane simply halted mid-session while the un-reversed middle lane
+       kept going.) Park it far ahead, then hop it forward again whenever it
+       nears the start. The timeline is periodic, so a jump of whole iterations
+       lands on an identical frame and is invisible; suppressEvents keeps the
+       seek from re-entering this callback. */
+    const RUNWAY = 500;
     tl.timeScale(-1);
-    tl.totalTime(tl.duration() * 1000 - offset);
+    tl.totalTime(iteration * RUNWAY - offset);
+    tl.eventCallback("onUpdate", () => {
+      const t = tl.totalTime();
+      if (t < iteration * 2) tl.totalTime(t + iteration * (RUNWAY - 4), true);
+    });
   } else if (offset) {
     tl.time(offset);
   }

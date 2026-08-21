@@ -64,6 +64,7 @@ export const reelVideos: Reel[] = [
   { src: "/videos/v6225.mp4", poster: "/videos/v6225.webp" },
   { src: "/videos/v6228.mp4", poster: "/videos/v6228.webp" },
   { src: "/videos/v6231.mp4", poster: "/videos/v6231.webp" },
+  { src: "/videos/v6551.mp4", poster: "/videos/v6551.webp" },
   { src: "/videos/v6554.mp4", poster: "/videos/v6554.webp" },
   { src: "/videos/v6833.mp4", poster: "/videos/v6833.webp" },
   { src: "/videos/v6836.mp4", poster: "/videos/v6836.webp" },

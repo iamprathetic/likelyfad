@@ -427,7 +427,8 @@
 .reel-track {
   display: flex;
   gap: clamp(0.6rem, 1.4vw, 1.1rem);
-  will-change: transform;
+  /* No will-change here: the loop transforms each .reel, never the track, so
+     promoting this would cost a compositor layer and buy nothing. */
 }
 /* .reel = positioning box moved by the infinite loop (GSAP owns its transform) */
 .reel {
@@ -555,8 +556,27 @@
     grid-template-columns: repeat(3, minmax(0, 1fr));
     /* Set by --wall-h in :root — tweak it there, not here. */
     height: var(--wall-h);
-    -webkit-mask-image: linear-gradient(to bottom, transparent, #000 11%, #000 89%, transparent);
-    mask-image: linear-gradient(to bottom, transparent, #000 11%, #000 89%, transparent);
+  }
+  /* Edge fade painted on top instead of masked. A mask re-composites every
+     moving layer underneath it each frame; a gradient is a flat paint over a
+     known solid background, and looks identical. */
+  .reelwall-stage::before,
+  .reelwall-stage::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 12%;
+    z-index: 4;
+    pointer-events: none;
+  }
+  .reelwall-stage::before {
+    top: 0;
+    background: linear-gradient(to bottom, var(--bg), transparent);
+  }
+  .reelwall-stage::after {
+    bottom: 0;
+    background: linear-gradient(to top, var(--bg), transparent);
   }
   .reel-track { flex-direction: column; }
   .reel { width: 100%; }
@@ -573,8 +593,24 @@
 @media (max-width: 960px) {
   .reelwall-stage {
     grid-auto-flow: row;
-    -webkit-mask-image: linear-gradient(to right, transparent, #000 7%, #000 93%, transparent);
-    mask-image: linear-gradient(to right, transparent, #000 7%, #000 93%, transparent);
+  }
+  .reelwall-stage::before,
+  .reelwall-stage::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 8%;
+    z-index: 4;
+    pointer-events: none;
+  }
+  .reelwall-stage::before {
+    left: 0;
+    background: linear-gradient(to right, var(--bg), transparent);
+  }
+  .reelwall-stage::after {
+    right: 0;
+    background: linear-gradient(to left, var(--bg), transparent);
   }
   .reel-track { flex-direction: row; width: max-content; }
   .reel { width: clamp(112px, 27vw, 168px); }
