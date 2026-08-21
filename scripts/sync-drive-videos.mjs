@@ -38,9 +38,12 @@ const OUT_DIR = path.join(ROOT, "public", "videos");
 const CACHE_FILE = path.join(ROOT, ".drive-sync.json");
 const GENERATED = path.join(ROOT, "src", "lib", "reels.generated.ts");
 
-/* Sized for a ~170px-wide tile on a 2x screen. Anything larger is bytes the
-   viewer downloads and never sees. No audio track at all — the wall is muted. */
-const TARGET_HEIGHT = 640;
+/* Right-sized for the wall tile, which renders ~147x261 CSS px — i.e. 293x521
+   device px on a 2x screen. 512 covers that almost exactly; the old 640 was
+   23% taller than anything could show, and those extra pixels cost decode time
+   on every frame of every playing clip, which is the wall's real bottleneck.
+   No audio track at all — the wall is muted. */
+const TARGET_HEIGHT = 512;
 const CRF = 30;
 const FPS = 24;
 
