@@ -82,44 +82,18 @@ export const content = {
     claimCta: CTA,
   },
 
-  /* THE WORK — six playable clips on a dark band. `src` and `poster` are paths
-     under /public. Every file here is a real client cut. */
+  /* THE WORK — the volume wall, ported from v3's SCENE 3. Three rows of clips
+     gliding in alternating directions on a dark band. The tiles come from the
+     same Drive-generated list as the hero wall, but start past the ones the
+     hero already shows so the two walls never run the same clip. */
   work: {
     kicker: "The work",
-    heading: "Don't trust stills. *Press play.*",
-    hint: "Sound on. Every clip is AI.",
-    clips: [
-      {
-        title: "Podcast style ad",
-        src: "/videos/ai-podcast.mp4",
-        poster: "/videos/ai-podcast.webp",
-      },
-      {
-        title: "Gym perfume ad",
-        src: "/videos/ai-ugc-gym-perfume-ad.mp4",
-        poster: "/videos/ai-ugc-gym-perfume-ad.webp",
-      },
-      {
-        title: "Live stage expert",
-        src: "/videos/live-stage-doctor-ai-ugc-health-product.mp4",
-        poster: "/videos/live-stage-doctor-ai-ugc-health-product.webp",
-      },
-      {
-        title: "Doctor spokesperson",
-        src: "/videos/doctor-in-office-ai-ugc-health-product.mp4",
-        poster: "/videos/doctor-in-office-ai-ugc-health-product.webp",
-      },
-      {
-        title: "Health product UGC",
-        src: "/videos/health-product-ai-ugc-1.mp4",
-        poster: "/videos/health-product-ai-ugc-1.webp",
-      },
-      {
-        title: "Expert review",
-        src: "/videos/expert-doctor-review-ai-ugc.mp4",
-        poster: "/videos/expert-doctor-review-ai-ugc.webp",
-      },
-    ],
+    heading: "Every one of these *is AI.*",
+    sub: "Different products, different sectors. Not one of them filmed.",
+    /* The wall is decorative to a screen reader — dozens of near-identical
+       tile labels would be noise — so one sentence stands in for all of it. */
+    description:
+      "A reel of dozens of AI-generated ads across different products and sectors. None of them were filmed.",
   },
 
   pricing: {
@@ -226,4 +200,3 @@ export const content = {
 } as const;
 
 export type Content = typeof content;
-export type WorkClip = (typeof content)["work"]["clips"][number];

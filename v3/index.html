@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Likelyfad · AI ads that look real</title>
+  <meta name="description" content="Photoreal AI video, UGC, and ads, real enough your customers won't question it. Made to run straight into paid. DM us your product." />
+  <link rel="icon" type="image/png" href="assets/favicon.png" />
+  <!-- Social share preview (X / iMessage / LinkedIn). For production, swap the relative
+       image paths for the full https://yourdomain/assets/share.png once the domain is set. -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Likelyfad · AI ads that look real" />
+  <meta property="og:description" content="Photoreal AI video, UGC, and ads, real enough your customers won't question it. DM us your product." />
+  <meta property="og:image" content="assets/share.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Likelyfad · AI ads that look real" />
+  <meta name="twitter:description" content="Photoreal AI ads, real enough your customers won't question it." />
+  <meta name="twitter:image" content="assets/share.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css?v=11" />
+</head>
+<body>
+
+  <a class="skip" href="#main">Skip to main content</a>
+
+  <!-- NAV -->
+  <nav class="nav" id="nav">
+    <div class="wrap">
+      <a class="nav-brand" href="#top" aria-label="Likelyfad home">
+        <img src="assets/wordmark.png" alt="Likelyfad" width="240" height="60" />
+      </a>
+      <a class="btn btn-primary" id="navCta" href="https://x.com/amanxdesign" target="_blank" rel="noopener">DM us your product</a>
+    </div>
+  </nav>
+
+  <span id="top"></span>
+
+  <main id="main" tabindex="-1">
+
+  <!-- ======================= SCENE 0 -> 1 : THE REALISM REVEAL ======================= -->
+  <section class="reveal-scene" id="revealScene">
+    <div class="reveal-stage">
+
+      <!-- Three clips on desktop, one on mobile. All un-render together on scroll. -->
+      <div class="frame-row" id="frameRow" aria-hidden="true">
+        <div class="frame">
+          <video class="vid" muted loop playsinline autoplay preload="auto" src="assets/videos/hero1.mp4"></video>
+          <div class="ai-layer"><div class="ai-grid"></div><div class="ai-scan"></div><span class="ai-tag"><i></i>AI&nbsp;·&nbsp;100%</span></div>
+          <div class="seam"></div>
+        </div>
+        <!-- Clips 2 + 3 are hidden on phones, so they ship without src (data-src)
+             and only load on desktop. Saves ~2.6MB of mobile bandwidth at the hero. -->
+        <div class="frame">
+          <video class="vid" muted loop playsinline preload="none" data-src="assets/videos/hero2.mp4"></video>
+          <div class="ai-layer"><div class="ai-grid"></div><div class="ai-scan"></div><span class="ai-tag"><i></i>AI&nbsp;·&nbsp;100%</span></div>
+          <div class="seam"></div>
+        </div>
+        <div class="frame">
+          <video class="vid" muted loop playsinline preload="none" data-src="assets/videos/hero3.mp4"></video>
+          <div class="ai-layer"><div class="ai-grid"></div><div class="ai-scan"></div><span class="ai-tag"><i></i>AI&nbsp;·&nbsp;100%</span></div>
+          <div class="seam"></div>
+        </div>
+      </div>
+
+      <!-- Black scrim that builds on mobile so the payoff reads over the full video -->
+      <div class="reveal-scrim" aria-hidden="true"></div>
+
+      <!-- Copy that swaps as you scroll -->
+      <div class="reveal-copy">
+        <p class="cue-kicker" id="cueKicker">A real shoot?</p>
+        <p class="line line-1" id="line1">Watch closely.</p>
+        <h1 class="line line-2" id="line2">That was AI. <span class="grad">Every frame.</span></h1>
+      </div>
+
+      <div class="scroll-cue" id="scrollCue"><span>scroll</span></div>
+    </div>
+  </section>
+
+  <!-- ======================= SCENE 2 (teaser of where it flows next) ======================= -->
+  <section class="claim-scene">
+    <p class="kicker" id="claimKicker">The point</p>
+    <h2 class="claim" id="claimHeading">Real enough your customers <span class="grad">won't question it</span>.</h2>
+    <p class="claim-sub" id="claimSub">And we don't make one. We make a flood.</p>
+  </section>
+
+  <!-- ======================= SCENE 3 : THE WORK (showcase wall) =======================
+       Tiles are generated from your real clips. To add more: drop clips in the
+       source folder and run  v3/tools/build-wall.sh  (rebuilds assets/wall/). -->
+  <section class="volume-scene" id="volumeScene">
+    <div class="volume-head">
+      <p class="kicker" id="wallKicker">The work</p>
+      <h2 class="vol-title" id="wallTitle">Every one of these <span class="grad">is AI.</span></h2>
+      <p class="vol-sub" id="wallSub">Different products, different sectors. Not one of them filmed.</p>
+      <p class="sr-only">A reel of dozens of AI-generated ad stills across different products and sectors. None of them were filmed.</p>
+    </div>
+    <!-- Auto-scrolling studio reel. Rows built in app.js from assets/wall/manifest.js -->
+    <div class="reel" id="reel" aria-hidden="true"></div>
+  </section>
+
+  <!-- ======================= SCENE 4 : THE WORK (macOS Finder) =======================
+       Folders + clips are generated from "Videos to use" by
+       v3/tools/build-portfolio.sh (each subfolder = a folder here). -->
+  <section class="work-scene" id="work">
+    <div class="work-inner">
+      <div class="work-head">
+        <p class="kicker" id="finderKicker">See for yourself</p>
+        <h2 class="work-title" id="finderTitle">Open a folder. <span class="grad">Watch the work.</span></h2>
+        <p class="work-hint" id="workHint">Click any folder. Every clip is AI.</p>
+      </div>
+      <div class="finder">
+        <div class="finder-bar">
+          <div class="lights"><span></span><span></span><span></span></div>
+          <div class="finder-title" id="finderWindowTitle">Likelyfad · The work</div>
+          <div class="finder-tools"><span></span><span></span></div>
+        </div>
+        <div class="desktop" id="desktop"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================= SCENE 5 : PIPELINE (how it's made) ======================= -->
+  <section class="pipe-scene" id="pipeline">
+    <div class="pipe-inner">
+      <div class="pipe-head">
+        <p class="kicker" id="pipeKicker">How it works</p>
+        <h2 class="pipe-title" id="pipeTitle">One brief in. <span class="grad">A month of ads out.</span></h2>
+        <p class="pipe-sub" id="pipeSub">You send the idea. We do the rest. You get a stack of ads ready to run.</p>
+      </div>
+      <ol class="pipe-steps" id="pipeSteps">
+        <span class="pipe-line" aria-hidden="true"></span>
+        <li class="pipe-step">
+          <div class="pipe-node"><span>01</span></div>
+          <h3>Brief</h3>
+          <p>Send your product and a rough idea. A DM is enough to start.</p>
+        </li>
+        <li class="pipe-step">
+          <div class="pipe-node"><span>02</span></div>
+          <h3>Generate</h3>
+          <p>We build variants from what already works. Your product, your footage, your voice. Not random AI actors.</p>
+        </li>
+        <li class="pipe-step">
+          <div class="pipe-node"><span>03</span></div>
+          <h3>Human check</h3>
+          <p>A person checks every frame. Color, texture, motion. Nothing fake ships.</p>
+        </li>
+        <li class="pipe-step">
+          <div class="pipe-node"><span>04</span></div>
+          <h3>Delivered</h3>
+          <p>Ready-to-run files in about 48 hours. Then we iterate.</p>
+        </li>
+      </ol>
+      <div class="pipe-stats" id="pipeStats">
+        <div class="pipe-stat"><b>48h</b><span>to first cuts</span></div>
+        <div class="pipe-stat"><b>20 to 40</b><span>ad variants a month</span></div>
+        <div class="pipe-stat"><b>100%</b><span>human-checked</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================= SCENE 6 : COMPARISON ======================= -->
+  <section class="cmp-scene" id="compare">
+    <div class="sec-inner">
+      <div class="sec-head">
+        <p class="kicker" id="cmpKicker">Where we fit</p>
+        <h2 class="sec-title" id="cmpTitle">Faster than an agency. Safer than raw AI.</h2>
+      </div>
+      <div class="compare" id="compareTable" role="table" aria-label="How Likelyfad compares"></div>
+    </div>
+  </section>
+
+  <!-- ======================= SCENE 7 : TESTIMONIALS ======================= -->
+  <section class="testi-scene" id="testimonials">
+    <div class="sec-inner">
+      <div class="sec-head">
+        <p class="kicker" id="testiKicker">What clients say</p>
+        <h2 class="sec-title" id="testiTitle">They came for fast. They stayed for real.</h2>
+      </div>
+      <div class="testi-grid" id="testiGrid"></div>
+    </div>
+  </section>
+
+  <!-- ======================= SCENE 8 : FAQ ======================= -->
+  <section class="faq-scene" id="faq">
+    <div class="sec-inner">
+      <div class="sec-head">
+        <p class="kicker" id="faqKicker">Questions</p>
+        <h2 class="sec-title" id="faqTitle">The stuff founders ask before they reach out.</h2>
+      </div>
+      <div class="faq-list" id="faqList"></div>
+    </div>
+  </section>
+
+  <!-- ======================= SCENE 9 : GUARANTEE ======================= -->
+  <section class="guarantee-scene" id="guarantee">
+    <div class="sec-inner">
+      <div class="sec-head">
+        <p class="kicker" id="gteKicker">Your risk, removed</p>
+        <h2 class="sec-title" id="gteTitle">One paid test. If it's not usable, full refund.</h2>
+      </div>
+      <div class="guarantee-list" id="gteList"></div>
+    </div>
+  </section>
+
+  <!-- ======================= SCENE 10 : CLOSE (the ask) ======================= -->
+  <section class="close-scene" id="close">
+    <p class="kicker" id="closeKicker">Your move</p>
+    <h2 class="close-title" id="closeTitle">Tell us what's in your head.<br>We'll turn it into <span class="grad">creative you can run.</span></h2>
+    <a class="btn btn-primary close-cta" id="closeCta" href="https://x.com/amanxdesign" target="_blank" rel="noopener">DM us your product</a>
+    <p class="close-sub" id="closeSub">No forms. No calls unless you want one. We reply within 24 hours.</p>
+    <p class="close-foot" id="closeFoot">Likelyfad. An AI production studio by Bright Life Creations.</p>
+  </section>
+
+  </main>
+
+  <!-- ============ FOLDER WINDOW (opens when you click a folder) ============ -->
+  <div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-labelledby="window-title">
+    <div class="window">
+      <div class="window-bar">
+        <div class="lights"><span></span><span></span><span></span></div>
+        <div class="window-title" id="window-title"></div>
+        <button class="window-close" id="window-close" aria-label="Close folder">&times;</button>
+      </div>
+      <div class="asset-grid" id="asset-grid"></div>
+    </div>
+  </div>
+
+  <!-- ============ FULLSCREEN PLAYER ============ -->
+  <div class="player" id="player" role="dialog" aria-modal="true" aria-label="Video player">
+    <button class="player-close" id="player-close" aria-label="Close player">&times;</button>
+    <video id="player-video" controls playsinline></video>
+  </div>
+
+  <!-- libs -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"></script>
+  <script src="content.js?v=11"></script>
+  <script src="assets/wall/manifest.js?v=11"></script>
+  <script src="assets/work/folders.js?v=11"></script>
+  <script src="app.js?v=11"></script>
+</body>
+</html>
