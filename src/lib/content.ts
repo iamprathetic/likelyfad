@@ -90,13 +90,36 @@ export const content = {
   testimonials: {
     kicker: "Signal",
     heading: "What teams say after the first batch.",
-    // DUMMY testimonials — replace with real ones later.
+    /* DUMMY testimonials — replace with real ones later.
+       `avatar` is a path under /public (e.g. "/testimonials/bloom.webp"). Leave
+       it null and the card falls back to initials on a gradient disc, so the
+       section looks finished before any real photos exist. */
     items: [
-      { quote: "Our cost per concept dropped 80% and we finally test more than two ideas a month.", who: "Growth lead, skincare brand" },
-      { quote: "Briefed on Monday, running ads by Thursday. It changed how often we ship.", who: "Founder, supplements" },
-      { quote: "We A/B tested it against a real shoot. The AI won on hold rate.", who: "Performance lead, beverage" },
-      { quote: "The talent stays consistent across a whole campaign. That alone sold our brand team.", who: "Creative director, apparel" },
-    ],
+      {
+        quote: "Our cost per concept dropped 80% and we finally test more than two ideas a month.",
+        username: "@bloomskin",
+        who: "Growth lead, skincare brand",
+        avatar: null,
+      },
+      {
+        quote: "Briefed on Monday, running ads by Thursday. It changed how often we ship.",
+        username: "@dailyform",
+        who: "Founder, supplements",
+        avatar: null,
+      },
+      {
+        quote: "We A/B tested it against a real shoot. The AI won on hold rate.",
+        username: "@hexbrew",
+        who: "Performance lead, beverage",
+        avatar: null,
+      },
+      {
+        quote: "The talent stays consistent across a whole campaign. That alone sold our brand team.",
+        username: "@northcut.co",
+        who: "Creative director, apparel",
+        avatar: null,
+      },
+    ] as { quote: string; username: string; who: string; avatar: string | null }[],
   },
 
   faq: {
