@@ -43,7 +43,15 @@ const PER_LANE = 6;
    screen at 1440px, so this genuinely binds: the clips that miss out are the
    newest arrivals, and those are still inside the edge fade where a held
    poster frame is hard to notice. Raise it if the wall looks too static. */
-const MAX_PLAYING = 6;
+const MAX_PLAYING = 4;
+/* Cold-start clips one at a time, this far apart. Each `play()` on a
+   preload="none" element is a network fetch + demux + decoder spin-up, and
+   granting the whole budget in one pass fired six of those into the same frame
+   — which is what made the wall hitch as it appeared. Draining the grants
+   instead spreads that cost over ~1s of wall time that the edge fade hides. */
+const START_STAGGER = 180;
+/* And hold the very first one until hydration has finished painting. */
+const START_WARMUP = 350;
 const DESKTOP = "(min-width: 961px)";
 
 export function ReelWall() {
@@ -100,13 +108,48 @@ export function ReelWall() {
     if (conn?.saveData) return;
 
     const visible = new Set<HTMLVideoElement>();
+    // Holds a playback slot — granted synchronously by reconcile() so the
+    // budget maths stays exact, even though the clip may not have started yet.
     const playing = new Set<HTMLVideoElement>();
+    // Slot-holders still waiting their turn to actually spin up a decoder.
+    let pending: HTMLVideoElement[] = [];
+    let starting = false;
+    let timer = 0;
+
+    /* Start one queued clip, then schedule the next. Serialising the cold
+       starts is the whole point: a decoder init is a chunk of main-thread and
+       GPU work, and six of them at once is a visible stall. */
+    const drain = () => {
+      timer = 0;
+      if (starting || suspended.current) return;
+      let v: HTMLVideoElement | undefined;
+      // Skip anything that lost its slot while it sat in the queue.
+      while ((v = pending.shift()) && !playing.has(v)) {
+        /* keep draining */
+      }
+      if (!v) return;
+      starting = true;
+      const next = () => {
+        starting = false;
+        if (pending.length) timer = window.setTimeout(drain, START_STAGGER);
+      };
+      v.play().then(next, () => {
+        playing.delete(v!);
+        next();
+      });
+    };
+
+    const schedule = (delay: number) => {
+      if (timer || starting || !pending.length) return;
+      timer = window.setTimeout(drain, delay);
+    };
 
     /* Incumbents keep their slot. Re-granting the budget purely in DOM order
        meant a card that just became visible could evict one already playing,
        so clips flapped play/pause continuously as the lanes moved — and a
        play() interrupted by pause() is exactly what makes decoding stutter.
        Only leftover budget goes to new arrivals. */
+    let warmed = false;
     const reconcile = () => {
       if (suspended.current) return;
       const keep = players.filter((v) => playing.has(v) && visible.has(v));
@@ -115,17 +158,26 @@ export function ReelWall() {
 
       for (const v of players) {
         if (wanted.has(v) && !playing.has(v)) {
-          playing.add(v);
-          v.play().catch(() => playing.delete(v));
+          playing.add(v); // takes the slot now...
+          pending.push(v); // ...but starts on its turn
         } else if (!wanted.has(v) && playing.has(v)) {
           playing.delete(v);
           v.pause();
         }
       }
+      schedule(warmed ? START_STAGGER : START_WARMUP);
+      warmed = true;
+    };
+
+    const stopQueue = () => {
+      if (timer) clearTimeout(timer);
+      timer = 0;
+      pending = [];
     };
 
     playback.current = {
       pauseAll: () => {
+        stopQueue();
         playing.forEach((v) => v.pause());
         playing.clear();
       },
@@ -143,7 +195,7 @@ export function ReelWall() {
       },
       // The lanes are in constant motion, so start a clip slightly before it
       // reaches the edge — it's decoding by the time it's actually visible.
-      { root: stage, rootMargin: "15% 0px 15% 0px", threshold: 0 }
+      { root: stage, rootMargin: "5% 0px 5% 0px", threshold: 0 }
     );
     players.forEach((v) => io.observe(v));
 
@@ -157,6 +209,7 @@ export function ReelWall() {
     return () => {
       io.disconnect();
       document.removeEventListener("visibilitychange", onVisibility);
+      stopQueue();
       playing.forEach((v) => v.pause());
       playback.current = null;
     };
@@ -211,7 +264,7 @@ export function ReelWall() {
           const gap = parseFloat(getComputedStyle(track).gap) || 16;
           return marqueeLoop(track.querySelectorAll(".reel"), {
             axis,
-            speed: axis === "y" ? 0.62 : 0.85,
+            speed: axis === "y" ? 0.35 : 0.3,
             padding: gap,
             reversed: dirs[i] === -1,
             startProgress: i * 0.17,

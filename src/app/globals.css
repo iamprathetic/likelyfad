@@ -38,6 +38,28 @@
   --grad: linear-gradient(100deg, var(--rose) 0%, var(--pink) 55%, var(--pink-deep) 100%);
   --grad-soft: linear-gradient(100deg, rgba(251, 113, 133, 0.14), rgba(236, 72, 153, 0.14));
 
+  /* Paper as raw channels so fades can be authored at any alpha. Must track
+     --color-paper (#fffdfe) — a mismatch here shows up as a grey seam. */
+  --bg-rgb: 255, 253, 254;
+  /* A straight `paper -> transparent` ramp fades its alpha linearly, and the
+     eye reads the point where it lands as a soft-but-visible band. These stops
+     trace a smoothstep instead: it hugs full paper at the start, drops through
+     the middle, then tails off flat into nothing, so the meeting point with
+     the page is genuinely invisible. Shared by every wall edge fade. */
+  --fade-stops:
+    rgba(var(--bg-rgb), 1) 0%,
+    rgba(var(--bg-rgb), 0.99) 10%,
+    rgba(var(--bg-rgb), 0.955) 20%,
+    rgba(var(--bg-rgb), 0.89) 30%,
+    rgba(var(--bg-rgb), 0.79) 40%,
+    rgba(var(--bg-rgb), 0.655) 50%,
+    rgba(var(--bg-rgb), 0.5) 60%,
+    rgba(var(--bg-rgb), 0.345) 70%,
+    rgba(var(--bg-rgb), 0.205) 79%,
+    rgba(var(--bg-rgb), 0.095) 87%,
+    rgba(var(--bg-rgb), 0.03) 94%,
+    rgba(var(--bg-rgb), 0) 100%;
+
   --shadow-sm: 0 1px 2px rgba(22, 17, 26, 0.04), 0 6px 18px rgba(22, 17, 26, 0.05);
   --shadow: 0 22px 60px -22px rgba(22, 17, 26, 0.24);
   --shadow-pink: 0 20px 46px -16px rgba(236, 72, 153, 0.45);
@@ -323,18 +345,66 @@
   overflow: hidden;
   text-align: center;
 }
+/* The hero's ambient pink wash. Two things make a glow like this read as a
+   stain on white paper rather than as light: a hard-ish outer stop, and a ramp
+   that fades its alpha linearly. So every layer here runs a smoothstep falloff
+   out to alpha 0 — it holds colour through the core, drops through the middle,
+   then flattens into nothing well before the box edge, so there is no ring and
+   no seam against the paper. Each ramp also ends at alpha 0 of its OWN pink,
+   never `transparent` (= rgba(0,0,0,0)), which is what would grey the tail. */
 .hero-aura {
   position: absolute;
-  top: -8%; left: 50%;
-  transform: translateX(-50%);
-  width: min(940px, 92vw);
-  height: 540px;
-  background:
-    radial-gradient(50% 50% at 50% 38%, rgba(236, 72, 153, 0.22), transparent 70%),
-    radial-gradient(42% 42% at 28% 62%, rgba(251, 113, 133, 0.18), transparent 70%),
-    radial-gradient(38% 38% at 74% 60%, rgba(219, 39, 119, 0.14), transparent 70%);
-  filter: blur(14px);
+  top: 50%;
+  left: 50%;
+  transform: translate(-72%, -50%);
+  width: min(1040px, 96vw);
+  height: min(660px, 72vh);
+  z-index: 0;
   pointer-events: none;
+  background:
+    /* core — pink */
+    radial-gradient(48% 52% at 30% 36%,
+      rgba(236, 72, 153, 0.2) 0%,
+      rgba(236, 72, 153, 0.194) 15%,
+      rgba(236, 72, 153, 0.174) 30%,
+      rgba(236, 72, 153, 0.14) 45%,
+      rgba(236, 72, 153, 0.096) 60%,
+      rgba(236, 72, 153, 0.06) 72%,
+      rgba(236, 72, 153, 0.028) 84%,
+      rgba(236, 72, 153, 0.01) 93%,
+      rgba(236, 72, 153, 0) 100%),
+    /* warm lower-left bloom — rose */
+    radial-gradient(46% 48% at 8% 66%,
+      rgba(251, 113, 133, 0.16) 0%,
+      rgba(251, 113, 133, 0.155) 15%,
+      rgba(251, 113, 133, 0.139) 30%,
+      rgba(251, 113, 133, 0.112) 45%,
+      rgba(251, 113, 133, 0.077) 60%,
+      rgba(251, 113, 133, 0.048) 72%,
+      rgba(251, 113, 133, 0.022) 84%,
+      rgba(251, 113, 133, 0.008) 93%,
+      rgba(251, 113, 133, 0) 100%),
+    /* depth under the core — deep pink */
+    radial-gradient(42% 44% at 46% 64%,
+      rgba(219, 39, 119, 0.11) 0%,
+      rgba(219, 39, 119, 0.107) 15%,
+      rgba(219, 39, 119, 0.096) 30%,
+      rgba(219, 39, 119, 0.077) 45%,
+      rgba(219, 39, 119, 0.053) 60%,
+      rgba(219, 39, 119, 0.033) 72%,
+      rgba(219, 39, 119, 0.015) 84%,
+      rgba(219, 39, 119, 0.006) 93%,
+      rgba(219, 39, 119, 0) 100%);
+  /* Smooths the last of the 8-bit stepping a wash this wide would otherwise
+     show on flat paper. The ramps already reach 0 well inside the box, so the
+     blur has nothing to smear off the edges.
+     PERF: a filter this wide is only cheap while it is STATIC — the layer
+     rasterises once and is then just composited. Animating scale (or anything
+     else geometric) on it forces a full re-blur of ~1040x660px every frame,
+     right next to the reel wall. So the drift below animates opacity only,
+     which the compositor varies without touching the raster. */
+  filter: blur(28px);
+  will-change: opacity;
 }
 .hero-inner { position: relative; display: flex; flex-direction: column; align-items: center; }
 .hero-headline { margin-top: 1rem; max-width: 17ch; }
@@ -391,10 +461,12 @@
   }
   .hero-split .hero-sub { max-width: 42ch; }
   .hero-split .hero-ctas { justify-content: flex-start; }
+  /* Weighted off the left edge of the hero column so the wash bleeds out of
+     frame instead of crowding the reel wall on the right. */
   .hero-split .hero-aura {
-    left: 12%;
-    transform: none;
-    width: min(760px, 60vw);
+    left: -30%;
+    transform: translateY(-50%);
+    width: min(820px, 62vw);
   }
 }
 
@@ -423,6 +495,10 @@
   min-width: 0;
   min-height: 0;
   padding: clamp(12px, 1.5vw, 20px);
+  /* Six cards move in here continuously. Without containment the browser has
+     to consider the rest of the page when invalidating layout and paint on
+     every frame; this scopes that work to the lane. */
+  contain: layout paint style;
 }
 .reel-track {
   display: flex;
@@ -559,29 +635,30 @@
   }
   /* Edge fade painted on top instead of masked. A mask re-composites every
      moving layer underneath it each frame; a gradient is a flat paint over a
-     known solid background, and looks identical. */
+     known solid background, and looks identical. Taller than a hard crop needs
+     so the eased ramp has room to disappear. */
   .reelwall-stage::before,
   .reelwall-stage::after {
     content: "";
     position: absolute;
     left: 0;
     right: 0;
-    height: 12%;
+    height: 18%;
     z-index: 4;
     pointer-events: none;
   }
   .reelwall-stage::before {
     top: 0;
-    background: linear-gradient(to bottom, var(--bg), transparent);
+    background: linear-gradient(to bottom, var(--fade-stops));
   }
   .reelwall-stage::after {
     bottom: 0;
-    background: linear-gradient(to top, var(--bg), transparent);
+    background: linear-gradient(to top, var(--fade-stops));
   }
   .reel-track { flex-direction: column; }
   .reel { width: 100%; }
   /* Cards angle inward so the three columns read as one wall. */
-  .reel-lane:nth-child(1) .reel-tilt { transform: rotateY(13deg) scale(0.94); }
+  .reel-lane:nth-child(1) .reel-tilt { transform: scale(0.94); }
   .reel-lane:nth-child(2) .reel-tilt { transform: scale(0.97); }
   .reel-lane:nth-child(3) .reel-tilt { transform: rotateY(-13deg) scale(0.94); }
   .reel-lane .reel:hover .reel-tilt {
@@ -600,17 +677,17 @@
     position: absolute;
     top: 0;
     bottom: 0;
-    width: 8%;
+    width: 13%;
     z-index: 4;
     pointer-events: none;
   }
   .reelwall-stage::before {
     left: 0;
-    background: linear-gradient(to right, var(--bg), transparent);
+    background: linear-gradient(to right, var(--fade-stops));
   }
   .reelwall-stage::after {
     right: 0;
-    background: linear-gradient(to left, var(--bg), transparent);
+    background: linear-gradient(to left, var(--fade-stops));
   }
   .reel-track { flex-direction: row; width: max-content; }
   .reel { width: clamp(112px, 27vw, 168px); }

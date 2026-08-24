@@ -24,22 +24,22 @@ export function Hero() {
         stagger: 0.09,
         delay: 0.15,
       });
-      // Ambient drift on the aura
-      gsap.to(root.current!.querySelector(".hero-aura"), {
-        scale: 1.12,
-        opacity: 0.9,
-        duration: 6,
-        ease: "sine.inOut",
-        repeat: -1,
-        yoyo: true,
-      });
+      // Ambient drift on the aura. Opacity ONLY, deliberately: the aura carries
+      // a wide blur, and scaling it would re-rasterise that blur every frame
+      // for as long as the page is open. Opacity is a compositor-only property,
+      // so the breathe is effectively free.
+      gsap.fromTo(
+        root.current!.querySelector(".hero-aura"),
+        { opacity: 0.78 },
+        { opacity: 1, duration: 9, ease: "sine.inOut", repeat: -1, yoyo: true }
+      );
     },
     { scope: root, dependencies: [reduced], revertOnUpdate: true }
   );
 
   return (
     <header className="hero" id="top" ref={root}>
-      <div className="hero-aura" aria-hidden="true" />
+      {/* <div className="hero-aura" aria-hidden="true" /> */}
       <div className="wrap hero-inner">
         <span className="kicker" data-hero-fade>
           {hero.eyebrow}

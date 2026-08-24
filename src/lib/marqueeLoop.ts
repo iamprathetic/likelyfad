@@ -37,36 +37,49 @@ export function marqueeLoop(
   const offsetOf = (el: HTMLElement) => (vertical ? el.offsetTop : el.offsetLeft);
   const outerOf = (el: HTMLElement) => (vertical ? el.offsetHeight : el.offsetWidth);
 
-  const startPos = offsetOf(items[0]);
   const sizes: number[] = [];
   const pcts: number[] = [];
+  const offsets: number[] = [];
   const pixelsPerSecond = (config.speed || 1) * 100;
   const snap = gsap.utils.snap(1);
 
-  gsap.set(items, {
-    [pctProp]: (i: number, el: Element) => {
-      const s = (sizes[i] = parseFloat(gsap.getProperty(el, sizeProp, "px") as string));
-      pcts[i] = snap(
-        (parseFloat(gsap.getProperty(el, posProp, "px") as string) / s) * 100 +
-          (gsap.getProperty(el, pctProp) as number)
-      );
-      return pcts[i];
-    },
-  });
+  /* READ PASS — every layout query first, in one go.
+     This used to be a single gsap.set() with a function value, which computes
+     and WRITES one element at a time. Reading `height` right after writing a
+     transform invalidates layout, so the browser had to reflow once per item,
+     per lane, on a subtree holding eighteen <video> elements — a burst of
+     forced synchronous layout exactly as the wall mounted. Measuring everything
+     up front and writing afterwards costs one reflow instead of N.
+     (Safe to hoist: offsetTop/offsetHeight are unaffected by the transforms
+     written below, so the values are identical either way.) */
+  for (let i = 0; i < length; i++) {
+    const el = items[i];
+    offsets[i] = offsetOf(el);
+    sizes[i] = parseFloat(gsap.getProperty(el, sizeProp, "px") as string);
+    pcts[i] = snap(
+      (parseFloat(gsap.getProperty(el, posProp, "px") as string) / sizes[i]) * 100 +
+        (gsap.getProperty(el, pctProp) as number)
+    );
+  }
+  const lastOuter = outerOf(items[length - 1]);
+  const startPos = offsets[0];
+
+  // WRITE PASS — no layout reads past this point.
+  gsap.set(items, { [pctProp]: (i: number) => pcts[i] });
   gsap.set(items, { [posProp]: 0 });
 
   const last = items[length - 1];
   const totalSize =
-    offsetOf(last) +
+    offsets[length - 1] +
     (pcts[length - 1] / 100) * sizes[length - 1] -
     startPos +
-    outerOf(last) * (gsap.getProperty(last, scaleProp) as number) +
+    lastOuter * (gsap.getProperty(last, scaleProp) as number) +
     (config.padding || 0);
 
   for (let i = 0; i < length; i++) {
     const item = items[i];
     const cur = (pcts[i] / 100) * sizes[i];
-    const distanceToStart = offsetOf(item) + cur - startPos;
+    const distanceToStart = offsets[i] + cur - startPos;
     const distanceToLoop =
       distanceToStart + sizes[i] * (gsap.getProperty(item, scaleProp) as number);
     tl.to(
