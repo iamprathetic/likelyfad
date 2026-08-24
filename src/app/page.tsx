@@ -3,6 +3,7 @@ import { Nav } from "@/components/sections/Nav";
 import { Hero } from "@/components/sections/Hero";
 import { ReelWall } from "@/components/sections/ReelWall";
 import { WhyUs } from "@/components/sections/WhyUs";
+import { Work } from "@/components/sections/Work";
 import { Pricing } from "@/components/sections/Pricing";
 import { Testimonials } from "@/components/sections/Testimonials";
 import { Faq } from "@/components/sections/Faq";
@@ -21,6 +22,7 @@ export default function Home() {
           <ReelWall />
         </div>
         <WhyUs />
+        <Work />
         <Pricing />
         <Testimonials />
         <Faq />

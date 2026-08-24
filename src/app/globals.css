@@ -1,10 +1,17 @@
 @import "tailwindcss";
 
 /* ============================================================================
-   LIKELYFAD — Design System (pink + white)
+   LIKELYFAD — Design System (flame → pink → violet on warm paper)
    ----------------------------------------------------------------------------
-   Minimal, premium, conversion-first. White paper, near-black ink, a single
-   pink→rose accent. Generous whitespace, restrained motion.
+   Minimal, premium, conversion-first. Warm paper, near-black ink, and one
+   three-stop brand gradient. Generous whitespace, restrained motion.
+
+   TWO GRADIENTS, ON PURPOSE. --grad is the bright brand ramp: correct on dark
+   surfaces and on filled shapes (buttons, ticks, rules) where it is the
+   background, not the text. Run as TEXT on warm paper its flame stop drops to
+   roughly 2.4:1, so light sections use --grad-onlight, a darkened cut of the
+   same ramp that clears AA at body size. Nothing reads --grad directly for
+   text: --grad-text resolves to the right one per surface (see .on-dark).
    ========================================================================== */
 
 @theme {
@@ -17,16 +24,20 @@
   --font-sans: var(--font-lato), "Lato", system-ui, sans-serif;
   --font-mono: var(--font-jetbrains), "JetBrains Mono", ui-monospace, monospace;
 
-  --color-paper: #fffdfe;
-  --color-paper-2: #fdf2f8;
-  --color-ink: #16111a;
-  --color-ink-soft: #575061;
-  --color-ink-faint: #9b94a3;
-  --color-line: rgba(22, 17, 26, 0.1);
-  --color-pink: #ec4899;
-  --color-pink-deep: #db2777;
-  --color-rose: #fb7185;
-  --color-noir: #140f19;
+  --color-paper: #fbf9f6;
+  --color-paper-2: #fff7f3;
+  --color-ink: #16141a;
+  --color-ink-soft: #56505c;
+  --color-ink-faint: #6e6876;
+  --color-line: rgba(22, 20, 26, 0.1);
+  /* Brand ramp, in order: flame → pink → violet.
+     `rose` and `pink-deep` keep their names because Tailwind utilities across
+     the components are built on them (text-pink-deep, hover:border-pink). */
+  --color-rose: #ff6a3d; /* flame — gradient stop 1 */
+  --color-pink: #f0407f; /* accent — gradient stop 2, and the focus/hover pink */
+  --color-violet: #8a4fe0; /* gradient stop 3 */
+  --color-pink-deep: #d81e63; /* the AA-safe ink for kickers and hover text */
+  --color-noir: #141217;
 }
 
 :root {
@@ -39,13 +50,19 @@
   --pink: var(--color-pink);
   --pink-deep: var(--color-pink-deep);
   --rose: var(--color-rose);
+  --violet: var(--color-violet);
   --noir: var(--color-noir);
-  --grad: linear-gradient(100deg, var(--rose) 0%, var(--pink) 55%, var(--pink-deep) 100%);
-  --grad-soft: linear-gradient(100deg, rgba(251, 113, 133, 0.14), rgba(236, 72, 153, 0.14));
+  --grad: linear-gradient(100deg, var(--rose) 0%, var(--pink) 52%, var(--violet) 100%);
+  /* Same ramp, darkened, for gradient TEXT on warm paper. */
+  --grad-onlight: linear-gradient(100deg, #e4521f 0%, #d81e63 52%, #7a3fd0 100%);
+  /* What .grad-text and RevealText actually read. Light surfaces get the
+     readable cut; .on-dark flips it back to the bright one. */
+  --grad-text: var(--grad-onlight);
+  --grad-soft: linear-gradient(100deg, rgba(255, 106, 61, 0.13), rgba(138, 79, 224, 0.13));
 
   /* Paper as raw channels so fades can be authored at any alpha. Must track
-     --color-paper (#fffdfe) — a mismatch here shows up as a grey seam. */
-  --bg-rgb: 255, 253, 254;
+     --color-paper (#fbf9f6) — a mismatch here shows up as a grey seam. */
+  --bg-rgb: 251, 249, 246;
   /* A straight `paper -> transparent` ramp fades its alpha linearly, and the
      eye reads the point where it lands as a soft-but-visible band. These stops
      trace a smoothstep instead: it hugs full paper at the start, drops through
@@ -65,9 +82,9 @@
     rgba(var(--bg-rgb), 0.03) 94%,
     rgba(var(--bg-rgb), 0) 100%;
 
-  --shadow-sm: 0 1px 2px rgba(22, 17, 26, 0.04), 0 6px 18px rgba(22, 17, 26, 0.05);
-  --shadow: 0 22px 60px -22px rgba(22, 17, 26, 0.24);
-  --shadow-pink: 0 20px 46px -16px rgba(236, 72, 153, 0.45);
+  --shadow-sm: 0 1px 2px rgba(22, 20, 26, 0.04), 0 6px 18px rgba(22, 20, 26, 0.05);
+  --shadow: 0 22px 60px -22px rgba(22, 20, 26, 0.24);
+  --shadow-pink: 0 20px 46px -16px rgba(240, 64, 127, 0.45);
 
   --radius: 18px;
   --radius-lg: 28px;
@@ -191,11 +208,26 @@
   max-width: 40ch;
 }
 .grad-text {
-  background: var(--grad);
+  background: var(--grad-text);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
 }
+
+/* Dark surfaces (the work band, the footer). Everything inside re-reads the
+   bright ramp for text, and the muted inks lighten. Set on the section itself
+   so nesting a card inside needs no extra rules. */
+.on-dark {
+  --grad-text: var(--grad);
+  --ink: #f5f3f0;
+  --ink-soft: #a39fa8;
+  --ink-faint: #a39fa8;
+  --line: rgba(255, 255, 255, 0.1);
+}
+/* --pink-deep is tuned to clear AA on paper, which puts it around 3.6:1 on a
+   near-black band — under the bar for type this small. Kickers on dark drop to
+   the muted light ink instead. */
+.on-dark .section-kicker { color: #a39fa8; }
 
 /* ===== Accessibility ===== */
 .sr-only {
@@ -230,132 +262,6 @@
 }
 
 /* ============================================================================
-   BUTTONS
-   ========================================================================== */
-.btn {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.55em;
-  padding: 0.95rem 1.65rem;
-  border-radius: 100px;
-  font-family: var(--font-sans);
-  /* 700, not 600: Lato has no 600, so the browser would resolve it up to 700
-     regardless. Naming it keeps the declaration honest. */
-  font-weight: 700;
-  font-size: 0.96rem;
-  letter-spacing: -0.01em;
-  border: 1px solid transparent;
-  overflow: hidden;
-  will-change: transform;
-  transition: color var(--dur) var(--ease), border-color var(--dur) var(--ease),
-    background var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
-}
-.btn-label, .btn-arrow { position: relative; z-index: 1; }
-.btn-arrow { transition: transform var(--dur) var(--ease); }
-.btn:hover .btn-arrow { transform: translateX(4px); }
-
-.btn-grad {
-  background: var(--grad);
-  background-size: 150% 100%;
-  background-position: 0% 0%;
-  color: #fff;
-  box-shadow: 0 12px 30px -12px rgba(236, 72, 153, 0.6);
-}
-.btn-grad:hover { background-position: 100% 0%; box-shadow: var(--shadow-pink); }
-
-.btn-dark { background: var(--ink); color: var(--bg); }
-.btn-dark::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: var(--grad);
-  transform: translateY(101%);
-  transition: transform var(--dur) var(--ease-emphasis);
-  z-index: 0;
-}
-.btn-dark:hover { box-shadow: var(--shadow-pink); }
-.btn-dark:hover::after { transform: translateY(0); }
-
-.btn-ghost { background: transparent; color: var(--ink); border-color: var(--line); }
-.btn-ghost:hover { border-color: var(--pink); color: var(--pink-deep); }
-
-.btn-light { background: #fff; color: var(--ink); border-color: var(--line); }
-.btn-light:hover { border-color: var(--pink); color: var(--pink-deep); box-shadow: var(--shadow-sm); }
-
-/* ============================================================================
-   REVEAL PRIMITIVES
-   ========================================================================== */
-.rt { display: inline; }
-.rt-word {
-  display: inline-flex;
-  overflow: hidden;
-  vertical-align: top;
-  padding-bottom: 0.06em;
-}
-.rt-inner { display: inline-block; will-change: transform; }
-.rt-space { display: inline; white-space: pre; }
-
-/* ===== Shared section heading ===== */
-.section-head {
-  /* The title is `display: inline` (via .rt), so max-width can't sit on it —
-     the wrap is decided here. A `ch`/`em` cap would resolve against the body
-     font size, not the title's, so the measure is derived from --title-size
-     instead: ~11.5 title-em is wide enough that every heading breaks over two
-     lines rather than three, and far too narrow to collapse onto one. */
-  --title-size: clamp(3.2rem, 1.5rem + 4.9vw, 5.1rem);
-  max-width: calc(var(--title-size) * 11.5);
-  margin-inline: auto;
-  margin-bottom: clamp(1.7rem, 3.2vw, 2.6rem);
-  text-align: center;
-}
-.section-head-title {
-  margin-top: 0.85rem;
-  /* Larger than the base .display-lg so section headings carry more weight. */
-  font-size: var(--title-size);
-}
-/* The section kickers (Why us / Pricing / Signal / Questions) sit above a big
-   heading, so they need more presence than the base .kicker size. */
-.section-head .kicker { font-size: clamp(1.3rem, 0.82rem + 0.3vw, 1.05rem); }
-.section-head .kicker::before { width: 2.2em; }
-
-/* ============================================================================
-   NAV
-   ========================================================================== */
-.nav {
-  position: fixed;
-  top: 0; left: 0; right: 0;
-  z-index: 120;
-  padding-block: 1.1rem;
-  transition: transform 0.5s var(--ease), background 0.4s var(--ease),
-    padding 0.4s var(--ease), box-shadow 0.4s var(--ease), backdrop-filter 0.4s var(--ease);
-}
-.nav.is-scrolled {
-  padding-block: 0.7rem;
-  background: color-mix(in srgb, var(--bg) 74%, transparent);
-  backdrop-filter: saturate(150%) blur(16px);
-  box-shadow: 0 1px 0 var(--line);
-}
-.nav.is-hidden { transform: translateY(-115%); }
-.nav-inner { display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; }
-.nav-brand { font-family: var(--font-display); font-weight: 800; font-size: 1.4rem; letter-spacing: -0.03em; }
-.nav-links { display: flex; gap: 2rem; margin-left: auto; margin-right: 1.5rem; }
-.nav-link { position: relative; font-size: 0.95rem; font-weight: 400; color: var(--ink-soft); }
-.nav-link::after {
-  content: "";
-  position: absolute;
-  left: 0; bottom: -3px;
-  width: 100%; height: 1.5px;
-  background: var(--grad);
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 0.4s var(--ease-emphasis);
-}
-.nav-link:hover { color: var(--ink); }
-.nav-link:hover::after { transform: scaleX(1); }
-
-/* ============================================================================
    HERO
    ========================================================================== */
 .hero {
@@ -387,37 +293,37 @@
   background:
     /* core — pink */
     radial-gradient(48% 52% at 30% 36%,
-      rgba(236, 72, 153, 0.2) 0%,
-      rgba(236, 72, 153, 0.194) 15%,
-      rgba(236, 72, 153, 0.174) 30%,
-      rgba(236, 72, 153, 0.14) 45%,
-      rgba(236, 72, 153, 0.096) 60%,
-      rgba(236, 72, 153, 0.06) 72%,
-      rgba(236, 72, 153, 0.028) 84%,
-      rgba(236, 72, 153, 0.01) 93%,
-      rgba(236, 72, 153, 0) 100%),
+      rgba(240, 64, 127, 0.2) 0%,
+      rgba(240, 64, 127, 0.194) 15%,
+      rgba(240, 64, 127, 0.174) 30%,
+      rgba(240, 64, 127, 0.14) 45%,
+      rgba(240, 64, 127, 0.096) 60%,
+      rgba(240, 64, 127, 0.06) 72%,
+      rgba(240, 64, 127, 0.028) 84%,
+      rgba(240, 64, 127, 0.01) 93%,
+      rgba(240, 64, 127, 0) 100%),
     /* warm lower-left bloom — rose */
     radial-gradient(46% 48% at 8% 66%,
-      rgba(251, 113, 133, 0.16) 0%,
-      rgba(251, 113, 133, 0.155) 15%,
-      rgba(251, 113, 133, 0.139) 30%,
-      rgba(251, 113, 133, 0.112) 45%,
-      rgba(251, 113, 133, 0.077) 60%,
-      rgba(251, 113, 133, 0.048) 72%,
-      rgba(251, 113, 133, 0.022) 84%,
-      rgba(251, 113, 133, 0.008) 93%,
-      rgba(251, 113, 133, 0) 100%),
+      rgba(255, 106, 61, 0.16) 0%,
+      rgba(255, 106, 61, 0.155) 15%,
+      rgba(255, 106, 61, 0.139) 30%,
+      rgba(255, 106, 61, 0.112) 45%,
+      rgba(255, 106, 61, 0.077) 60%,
+      rgba(255, 106, 61, 0.048) 72%,
+      rgba(255, 106, 61, 0.022) 84%,
+      rgba(255, 106, 61, 0.008) 93%,
+      rgba(255, 106, 61, 0) 100%),
     /* depth under the core — deep pink */
     radial-gradient(42% 44% at 46% 64%,
-      rgba(219, 39, 119, 0.11) 0%,
-      rgba(219, 39, 119, 0.107) 15%,
-      rgba(219, 39, 119, 0.096) 30%,
-      rgba(219, 39, 119, 0.077) 45%,
-      rgba(219, 39, 119, 0.053) 60%,
-      rgba(219, 39, 119, 0.033) 72%,
-      rgba(219, 39, 119, 0.015) 84%,
-      rgba(219, 39, 119, 0.006) 93%,
-      rgba(219, 39, 119, 0) 100%);
+      rgba(138, 79, 224, 0.11) 0%,
+      rgba(138, 79, 224, 0.107) 15%,
+      rgba(138, 79, 224, 0.096) 30%,
+      rgba(138, 79, 224, 0.077) 45%,
+      rgba(138, 79, 224, 0.053) 60%,
+      rgba(138, 79, 224, 0.033) 72%,
+      rgba(138, 79, 224, 0.015) 84%,
+      rgba(138, 79, 224, 0.006) 93%,
+      rgba(138, 79, 224, 0) 100%);
   /* Smooths the last of the 8-bit stepping a wash this wide would otherwise
      show on flat paper. The ramps already reach 0 well inside the box, so the
      blur has nothing to smear off the edges.
@@ -562,7 +468,9 @@
   overflow: hidden;
   border: 1px solid var(--line);
   box-shadow: var(--shadow);
-  background: #fce7f3;
+  /* Poster placeholder while a clip is still preload="none". Warm neutral so
+     it reads as an unloaded frame, not as a coloured card. */
+  background: #efe7e1;
   transition: transform 0.55s var(--ease), box-shadow 0.55s var(--ease), opacity 0.45s var(--ease);
   backface-visibility: hidden;
 }
@@ -769,11 +677,131 @@
   gap: 1.4rem;
   padding: clamp(1.9rem, 3.4vw, 2.9rem);
   text-align: center;
-  background: var(--grad-soft);
+  /* Two corner washes on warm paper rather than a flat tint: the flame stop
+     enters top-left, the violet stop leaves bottom-right, so the band carries
+     the gradient's direction without competing with the type sitting on it. */
+  background:
+    radial-gradient(90% 130% at 10% 0%, rgba(255, 106, 61, 0.1), rgba(255, 106, 61, 0) 55%),
+    radial-gradient(90% 130% at 95% 100%, rgba(138, 79, 224, 0.1), rgba(138, 79, 224, 0) 55%),
+    var(--bg-2);
   border: 1px solid var(--line);
   border-radius: var(--radius-lg);
 }
 .why-claim-text { max-width: 26ch; }
+
+/* ============================================================================
+   THE WORK — six playable clips on a dark band
+   ----------------------------------------------------------------------------
+   The reel wall beside the hero is ambient proof: it moves, it is muted, and
+   you cannot choose what it shows you. This section is the opposite — a fixed,
+   curated six that the visitor drives. Hovering previews a clip muted in place;
+   clicking opens it full size with sound, which is the only place on the site
+   audio ever plays.
+
+   Dark on purpose. It is the one band between two light sections, so the work
+   reads as the exhibit rather than as more page. .on-dark (see the top of this
+   file) re-points the ink and gradient tokens for everything inside.
+   ========================================================================== */
+.work {
+  /* Full-bleed: the band spans the viewport even where .wrap is capped. */
+  position: relative;
+  background:
+    radial-gradient(120% 80% at 50% 0%, rgba(240, 64, 127, 0.09), rgba(240, 64, 127, 0) 55%),
+    linear-gradient(180deg, #17141b, var(--noir));
+  color: var(--ink);
+  padding-block: clamp(3rem, 6.5vh, 5rem);
+}
+.work-head { margin-bottom: clamp(1.7rem, 3.2vw, 2.6rem); }
+.work-hint {
+  margin-top: 0.9rem;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  color: var(--ink-faint);
+}
+.work-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: clamp(0.6rem, 1.2vw, 1rem);
+}
+.work-clip {
+  position: relative;
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  aspect-ratio: 9 / 16;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background: #000 center / cover no-repeat;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+  transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
+}
+.work-clip:hover,
+.work-clip:focus-visible {
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.55);
+}
+.work-clip:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+/* The poster is a background-image on the button, so the <video> can sit at
+   opacity 0 until it is genuinely playing. Fading it in on `playing` rather
+   than on hover is what stops the black first-frame flash while the decoder
+   spins up. */
+.work-clip video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity var(--dur) var(--ease);
+}
+.work-clip video.is-playing { opacity: 1; }
+.work-play {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+  transition: opacity var(--dur) var(--ease);
+}
+.work-play span {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+/* CSS triangle, so the play glyph costs no icon font and no SVG. */
+.work-play span::after {
+  content: "";
+  margin-left: 3px;
+  border-left: 11px solid #fff;
+  border-top: 7px solid transparent;
+  border-bottom: 7px solid transparent;
+}
+.work-clip:hover .work-play { opacity: 0; }
+.work-clip-title {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 1.6rem 0.7rem 0.6rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #fff;
+  text-align: left;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.72));
+}
+@media (max-width: 960px) {
+  .work-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 560px) {
+  .work-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
 
 /* ============================================================================
    PRICING
@@ -891,21 +919,21 @@
 
 /* ============================================================================
    TESTIMONIALS
+   ----------------------------------------------------------------------------
+   Three real quotes, attributed by role rather than by name. The old four-up
+   grid carried an avatar and a handle per card; with neither of those to hold,
+   the card is just the quote and its source, so the quote gets the size.
    ========================================================================== */
-.testi-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: clamp(1rem, 2vw, 1.6rem); }
-/* Full-bleed turns two columns into very wide slabs — spread them into one row. */
-@media (min-width: 1100px) {
-  .testi-grid { grid-template-columns: repeat(4, 1fr); }
-  /* Four-up leaves each card narrow; ease the header so the handle and role
-     still fit on one line each. */
-  .testi-head { gap: 0.6rem; }
-  .testi-dp { width: 40px; height: 40px; font-size: 0.85rem; }
-  .testi-user { font-size: 0.9rem; }
+.testi-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(1rem, 2vw, 1.6rem);
+  align-items: start;
 }
 .testi {
   position: relative;
   margin: 0;
-  padding: 1.6rem 1.55rem;
+  padding: 1.7rem 1.6rem;
   background: #fff;
   border: 1px solid var(--line);
   border-radius: var(--radius-lg);
@@ -913,62 +941,36 @@
   transition: transform 0.5s var(--ease), box-shadow 0.5s var(--ease);
 }
 .testi:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
-
-/* Attribution moves to the TOP of the card — photo, handle, then the quote —
-   so the card reads like a post rather than a pull-quote. */
-.testi-head {
+.testi blockquote {
+  margin: 0;
+  font-size: clamp(1.1rem, 1.02rem + 0.35vw, 1.28rem);
+  font-weight: 400;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+  text-wrap: pretty;
+}
+/* A short gradient rule instead of a photo: it marks where the quote ends and
+   the attribution begins without pretending to identify anyone. */
+.testi-who {
   display: flex;
   align-items: center;
-  gap: 0.7rem;
-  margin-bottom: 1rem;
-}
-.testi-dp {
-  flex: none;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  overflow: hidden;
-  display: grid;
-  place-items: center;
-  /* Fallback face: initials on the brand gradient. Only ever visible when the
-     item has no `avatar` — a real photo covers this completely. */
-  background: var(--grad);
-  color: #fff;
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: 0.92rem;
-  letter-spacing: 0.02em;
-  user-select: none;
-}
-.testi-dp img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-/* min-width:0 so a long handle ellipsises instead of pushing the disc over. */
-.testi-id { display: flex; flex-direction: column; gap: 0.1rem; min-width: 0; }
-.testi-user {
-  font-weight: 700;
-  font-size: 0.95rem;
-  letter-spacing: -0.01em;
-  color: var(--ink);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.testi blockquote { margin: 0; font-size: 1.15rem; font-weight: 400; line-height: 1.4; letter-spacing: -0.01em; }
-.testi-who {
+  gap: 0.65em;
+  margin-top: 1.1rem;
   font-family: var(--font-mono);
   font-size: 0.7rem;
   text-transform: uppercase;
   letter-spacing: 0.07em;
+  line-height: 1.5;
   color: var(--ink-faint);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
-
+.testi-who::before {
+  content: "";
+  flex: none;
+  width: 20px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--grad-onlight);
+}
 /* ============================================================================
    FAQ
    ========================================================================== */
@@ -1039,6 +1041,22 @@
   color: #fff;
   max-width: 22ch;
 }
+/* The CTA and the line that removes the last objection under it. Right-aligned
+   against the heading so the button lands at the end of the reading path. */
+.footer-cta-side {
+  display: grid;
+  gap: 0.85rem;
+  justify-items: end;
+  text-align: right;
+}
+.footer-cta-sub {
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  line-height: 1.6;
+  letter-spacing: 0.02em;
+  color: rgba(255, 255, 255, 0.45);
+  max-width: 34ch;
+}
 .footer-grid {
   display: grid;
   grid-template-columns: 1.6fr 1fr 1fr;
@@ -1062,7 +1080,6 @@
 .footer-base {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: 1rem;
   margin-top: clamp(2.1rem, 4vw, 2.8rem);
   padding-top: 1.25rem;
@@ -1071,8 +1088,6 @@
   font-size: 0.72rem;
   color: rgba(255, 255, 255, 0.4);
 }
-.footer-legal { display: flex; gap: 1.4rem; }
-.footer-legal a:hover { color: #fff; }
 
 /* ============================================================================
    RESPONSIVE
@@ -1081,15 +1096,18 @@
   .why-grid { grid-template-columns: repeat(2, 1fr); }
   .footer-grid { grid-template-columns: 1fr 1fr; }
   .footer-brand { grid-column: 1 / -1; }
+  /* Three quotes, so two columns would orphan one. Straight to a single
+     column, which also gives the longest quote its measure back. */
+  .testi-grid { grid-template-columns: 1fr; }
 }
 @media (max-width: 760px) {
   .nav-links { display: none; }
   .faq-grid { grid-template-columns: 1fr; }
   .faq-head { position: static; }
-  .testi-grid { grid-template-columns: 1fr; }
 }
 @media (max-width: 560px) {
   .why-grid { grid-template-columns: 1fr; }
   .footer-cta { flex-direction: column; align-items: flex-start; }
+  .footer-cta-side { justify-items: start; text-align: left; }
   .footer-base { flex-direction: column; align-items: flex-start; }
 }

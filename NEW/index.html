@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Likelyfad · AI ads that look real</title>
+  <meta name="description" content="Likelyfad makes AI video, UGC and statics that look shot on a real set. Fast enough to test every week, clean enough to run straight into paid. DM us your product." />
+  <link rel="icon" type="image/png" href="assets/favicon.png" />
+  <!-- Social share preview. Absolute URLs so cards render in DMs.
+       Swap the domain when the custom domain goes live. -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://likelyfad.vercel.app/" />
+  <meta property="og:title" content="Likelyfad · AI ads that look real" />
+  <meta property="og:description" content="AI video, UGC and statics that look shot on a real set. Clean enough to run straight into paid." />
+  <meta property="og:image" content="https://likelyfad.vercel.app/assets/share.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Likelyfad · AI ads that look real" />
+  <meta name="twitter:description" content="AI ads real enough your customers won't question them." />
+  <meta name="twitter:image" content="https://likelyfad.vercel.app/assets/share.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css?v=1" />
+</head>
+<body>
+
+  <a class="skip" href="#main">Skip to main content</a>
+
+  <!-- NAV -->
+  <nav class="nav" id="nav">
+    <div class="wrap">
+      <a class="nav-brand" href="#top" aria-label="Likelyfad home">
+        <img src="assets/wordmark.png" alt="Likelyfad" width="240" height="60" />
+      </a>
+      <div class="nav-links">
+        <a href="#why">Why us</a>
+        <a href="#work">Work</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#faq">FAQ</a>
+      </div>
+      <a class="btn btn-primary" id="navCta" href="https://x.com/amanxdesign" target="_blank" rel="noopener">DM us your product</a>
+    </div>
+  </nav>
+
+  <span id="top"></span>
+
+  <main id="main" tabindex="-1">
+
+  <!-- ============ 1. HERO : headline + CTA left, live proof wall right ============ -->
+  <section class="hero" id="hero">
+    <div class="wrap hero-grid">
+      <div class="hero-copy">
+        <p class="kicker" id="heroKicker">AI production studio</p>
+        <h1 class="hero-title" id="heroTitle">Ads so real, nobody asks <span class="grad">if they're AI.</span></h1>
+        <p class="hero-sub" id="heroSub">Likelyfad makes AI video, UGC and statics that look shot on a real set. Fast enough to test every week, clean enough to run straight into paid.</p>
+        <div class="hero-ctas">
+          <a class="btn btn-primary" id="heroCta" href="https://x.com/amanxdesign" target="_blank" rel="noopener">DM us your product</a>
+          <a class="btn btn-ghost" id="heroSecondary" href="#why">Why us</a>
+        </div>
+        <p class="micro-trust" id="heroTrust">First concepts in 48 hours · A human checks every frame</p>
+      </div>
+      <div class="hero-wall" aria-hidden="true">
+        <div class="wall-cols" id="wallCols"></div>
+        <p class="wall-caption" id="wallCaption">Real client work. Every frame is AI.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 2. WHY US : six reasons to believe + statement ============ -->
+  <section class="why" id="why">
+    <div class="wrap">
+      <div class="sec-head io-fade">
+        <p class="kicker" id="whyKicker">Why us</p>
+        <h2 class="sec-title" id="whyHeading">The reason brands <span class="grad">actually keep us.</span></h2>
+        <p class="sec-sub" id="whySub"></p>
+      </div>
+      <div class="why-grid" id="whyGrid"></div>
+      <div class="statement io-fade">
+        <p id="whyStatement">If your best ad is six months old, you don't have a creative problem. You have a <span class="grad">volume problem.</span></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 3. THE WORK : playable clips ============ -->
+  <section class="work" id="work">
+    <div class="wrap">
+      <div class="sec-head io-fade">
+        <p class="kicker" id="workKicker">The work</p>
+        <h2 class="sec-title" id="workHeading">Don't trust stills. <span class="grad">Press play.</span></h2>
+        <p class="sec-sub mono" id="workHint">Sound on. Every clip is AI.</p>
+      </div>
+      <div class="clips" id="clipsGrid"></div>
+    </div>
+  </section>
+
+  <!-- ============ 4. PRICING : quote per brief, no numbers ============ -->
+  <section class="pricing" id="pricing">
+    <div class="wrap">
+      <div class="sec-head io-fade">
+        <p class="kicker" id="priceKicker">Pricing</p>
+        <h2 class="sec-title" id="priceHeading">Priced to your brief, <span class="grad">not a package.</span></h2>
+      </div>
+      <div class="price-card io-fade">
+        <p class="price-blurb" id="priceBlurb"></p>
+        <ul class="price-checks" id="priceChecks"></ul>
+        <div class="price-cta">
+          <a class="btn btn-grad" id="priceCta" href="https://x.com/amanxdesign" target="_blank" rel="noopener">Get your quote</a>
+          <p class="price-note mono" id="priceNote"></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 5. WHAT CLIENTS SAY : real quotes only ============ -->
+  <section class="testi" id="testimonials">
+    <div class="wrap">
+      <div class="sec-head io-fade">
+        <p class="kicker" id="testiKicker">What clients say</p>
+        <h2 class="sec-title" id="testiHeading">Real reactions, <span class="grad">as sent.</span></h2>
+      </div>
+      <div class="testi-grid" id="testiGrid"></div>
+    </div>
+  </section>
+
+  <!-- ============ 6. FAQ ============ -->
+  <section class="faq" id="faq">
+    <div class="wrap faq-grid">
+      <div class="faq-head io-fade">
+        <p class="kicker" id="faqKicker">Questions</p>
+        <h2 class="sec-title" id="faqHeading">The stuff founders ask <span class="grad">before they reach out.</span></h2>
+        <a class="btn btn-ghost" id="faqCta" href="https://x.com/amanxdesign" target="_blank" rel="noopener">DM us your product</a>
+      </div>
+      <div class="faq-list io-fade" id="faqList"></div>
+    </div>
+  </section>
+
+  <!-- ============ 7. FINAL CTA + FOOTER ============ -->
+  <section class="close" id="close">
+    <div class="wrap close-row io-fade">
+      <h2 class="close-title" id="closeHeading">Ready to run ads nobody clocks as AI? <span class="grad">Let's talk.</span></h2>
+      <div class="close-side">
+        <a class="btn btn-primary" id="closeCta" href="https://x.com/amanxdesign" target="_blank" rel="noopener">DM us your product</a>
+        <p class="close-sub mono" id="closeSub">No forms. No calls unless you want one. We reply within 24 hours.</p>
+      </div>
+    </div>
+  </section>
+
+  </main>
+
+  <footer class="footer">
+    <div class="wrap footer-grid">
+      <div>
+        <div class="footer-brand grad" >Likelyfad</div>
+        <p class="footer-tagline" id="footerTagline">An AI production studio for brands that ship.</p>
+      </div>
+      <nav class="footer-links" aria-label="Site">
+        <span class="mono footer-label">Studio</span>
+        <a href="#why">Why us</a>
+        <a href="#work">Work</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+      <nav class="footer-links" aria-label="Connect">
+        <span class="mono footer-label">Connect</span>
+        <a id="footerX" href="https://x.com/amanxdesign" target="_blank" rel="noopener">X / Twitter</a>
+      </nav>
+    </div>
+    <div class="wrap footer-meta mono" id="footerLegal">© 2026 Likelyfad. An AI production studio by Bright Life Creations.</div>
+  </footer>
+
+  <!-- Fullscreen player for the work clips -->
+  <div class="player" id="player" role="dialog" aria-modal="true" aria-label="Video player">
+    <button class="player-close" id="player-close" aria-label="Close player">&times;</button>
+    <video id="player-video" controls playsinline></video>
+  </div>
+
+  <script src="content.js?v=1"></script>
+  <script src="app.js?v=1"></script>
+</body>
+</html>

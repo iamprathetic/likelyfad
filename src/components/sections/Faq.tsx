@@ -18,7 +18,7 @@ export function Faq() {
           <SectionHeading kicker={faq.kicker} heading={faq.heading} />
           <Reveal delay={0.1} className="faq-cta">
             <Button contact variant="light" withArrow>
-              Contact us
+              {faq.cta}
             </Button>
           </Reveal>
         </div>

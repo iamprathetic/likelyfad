@@ -1,11 +1,13 @@
 "use client";
 
 import { content } from "@/lib/content";
+import { PARENT_COMPANY } from "@/lib/site";
 import { Button } from "@/components/ui/Button";
+import { RevealText } from "@/components/anim/RevealText";
 import { useSmoothScroll } from "@/components/providers/SmoothScroll";
 
 export function Footer() {
-  const { footer, brand } = content;
+  const { footer, close, brand } = content;
   const { scrollTo } = useSmoothScroll();
   const year = 2026; // PLACEHOLDER — update or compute at build time
 
@@ -17,14 +19,18 @@ export function Footer() {
   };
 
   return (
-    <footer className="footer" aria-label="Footer">
+    /* on-dark re-points the ink and gradient tokens for everything inside, so
+       the gradient wordmark and the closing highlight use the bright ramp
+       rather than the darkened on-paper cut. */
+    <footer className="footer on-dark" aria-label="Footer">
       <div className="wrap footer-cta">
-        <p className="footer-cta-text">
-          Ready to see believable work, fast? <span className="grad-text">Let&rsquo;s talk.</span>
-        </p>
-        <Button contact variant="grad" withArrow>
-          {content.nav.cta}
-        </Button>
+        <RevealText as="p" className="footer-cta-text" text={close.heading} />
+        <div className="footer-cta-side">
+          <Button contact variant="grad" withArrow>
+            {close.cta}
+          </Button>
+          <p className="footer-cta-sub">{close.sub}</p>
+        </div>
       </div>
 
       <div className="wrap footer-grid">
@@ -41,7 +47,6 @@ export function Footer() {
             <ul>
               {col.links.map((l) => {
                 const external = "external" in l && l.external;
-                const placeholder = l.href === "#";
                 return (
                   <li key={l.label}>
                     <a
@@ -49,7 +54,6 @@ export function Footer() {
                       onClick={onAnchor(l.href)}
                       target={external ? "_blank" : undefined}
                       rel={external ? "noopener noreferrer" : undefined}
-                      data-placeholder-link={placeholder ? "true" : undefined}
                       className="footer-link"
                     >
                       {l.label}
@@ -64,14 +68,7 @@ export function Footer() {
 
       <div className="wrap footer-base">
         <span>
-          © {year} {brand}. All rights reserved.
-        </span>
-        <span className="footer-legal">
-          {footer.legal.map((l) => (
-            <a key={l.label} href={l.href} data-placeholder-link="true">
-              {l.label}
-            </a>
-          ))}
+          © {year} {brand}. An AI production studio by {PARENT_COMPANY}.
         </span>
       </div>
     </footer>

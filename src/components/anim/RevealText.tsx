@@ -45,7 +45,9 @@ export function RevealText({
   useGSAP(
     () => {
       if (reduced) return;
-      const inners = ref.current!.querySelectorAll(".rt-inner");
+      // data-attribute hook, not a class: the styling is Tailwind now, and a
+      // utility string is not a stable thing for GSAP to select on.
+      const inners = ref.current!.querySelectorAll("[data-rt-inner]");
       gsap.set(inners, { yPercent: 118 });
       gsap.to(inners, {
         yPercent: 0,
@@ -60,15 +62,27 @@ export function RevealText({
   );
 
   return (
-    <Tag ref={ref} className={`rt ${className}`}>
+    <Tag ref={ref} className={`inline ${className}`}>
       {tokens.map((t, i) =>
         /\s+/.test(t.word) ? (
-          <span key={i} className="rt-space">
+          <span key={i} className="inline whitespace-pre">
             {" "}
           </span>
         ) : (
-          <span key={i} className="rt-word">
-            <span className={`rt-inner${t.grad ? " grad-text" : ""}`}>{t.word}</span>
+          /* Each word gets its own clipping box so the inner span can slide up
+             from behind it. `align-top` keeps the inline-flex boxes on the
+             text baseline; the padding stops descenders being shaved off. */
+          <span key={i} className="inline-flex overflow-hidden align-top pb-[0.06em]">
+            <span
+              data-rt-inner
+              className={`inline-block will-change-transform${
+                /* --grad-text, not --grad: light sections resolve it to the
+                 AA-safe cut, .on-dark flips it back to the bright ramp. */
+              t.grad ? " bg-[image:var(--grad-text)] bg-clip-text text-transparent" : ""
+              }`}
+            >
+              {t.word}
+            </span>
           </span>
         )
       )}
