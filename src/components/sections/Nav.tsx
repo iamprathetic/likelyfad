@@ -32,8 +32,9 @@ export function Nav() {
   return (
     <header className={`nav ${scrolled ? "is-scrolled" : ""} ${hidden ? "is-hidden" : ""}`}>
       <div className="wrap nav-inner">
-        <a href="#top" className="nav-brand grad-text" onClick={go("#top")}>
-          {content.brand}
+        <a href="#top" className="nav-brand grad-text flex items-center" onClick={go("#top")}>
+               <img src="/ls-icon.png" alt="Likelyfad Studio" className="w-30 h-15" />
+ 
         </a>
 
         <nav className="nav-links" aria-label="Primary">
